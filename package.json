@@ -1,6 +1,7 @@
 {
   "name": "node-azure-boilerplate",
   "version": "1.0.0",
+  "author": "Mohan raj",
   "description": "Node.js Azure Function App with MSSQL, Sequelize, and Azure integration",
   "type": "module",
   "scripts": {
