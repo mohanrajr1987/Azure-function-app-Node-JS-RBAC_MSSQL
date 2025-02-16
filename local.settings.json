@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "WEBSITE_NODE_DEFAULT_VERSION": "~20",
+    "NODE_ENV": "development",
+    "DB_HOST": "localhost",
+    "DB_PORT": "1433",
+    "DB_NAME": "your_database",
+    "DB_USER": "your_username",
+    "DB_PASSWORD": "your_password",
+    "JWT_SECRET": "your_jwt_secret_key",
+    "AZURE_STORAGE_CONNECTION_STRING": "your_storage_connection_string",
+    "AZURE_STORAGE_CONTAINER_NAME": "documents",
+    "AZURE_KEY_VAULT_URL": "your_key_vault_url"
+  },
+  "Host": {
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}
