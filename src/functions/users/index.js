@@ -2,6 +2,7 @@ import { userController } from '../../controllers/user.js';
 import { authenticate, authorize } from '../../middlewares/auth.js';
 import { validate, userSchemas } from '../../middlewares/validation.js';
 import { createContext, executeMiddleware, handleError } from '../shared/middleware.js';
+import { parseCookies } from '../../middlewares/cookieParser.js';
 
 const routeHandlers = {
   'POST /register': {
@@ -47,7 +48,7 @@ export default async function (context, req) {
 
     // Initialize context and execute middleware
     const { req: request, res } = await createContext(context, req);
-    await executeMiddleware([...handler.middleware, handler.handler], request, res);
+    await executeMiddleware([parseCookies, ...handler.middleware, handler.handler], request, res);
 
     // Set default response if not set
     if (!context.res) {
