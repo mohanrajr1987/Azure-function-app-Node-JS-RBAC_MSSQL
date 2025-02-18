@@ -1,5 +1,5 @@
 import { User, Role } from '../models/index.js';
-import { generateToken } from '../utils/jwt.js';
+import { generateTokens, generateAccessToken, verifyToken } from '../utils/jwt.js';
 import emailService from '../services/email.js';
 
 export const userController = {
@@ -73,11 +73,19 @@ export const userController = {
       user.lastLogin = new Date();
       await user.save();
 
-      // Generate token
-      const token = generateToken({ id: user.id });
+      // Generate tokens
+      const { accessToken, refreshToken } = generateTokens({ id: user.id });
+
+      // Set refresh token in HTTP-only cookie
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      });
 
       res.json({
-        token,
+        token: accessToken,
         user: {
           id: user.id,
           email: user.email,
@@ -188,6 +196,36 @@ export const userController = {
     } catch (error) {
       console.error('List users error:', error);
       res.status(500).json({ message: 'Failed to list users' });
+    }
+  }
+,
+
+  async refreshToken(req, res) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+
+      if (!refreshToken) {
+        return res.status(401).json({ message: 'Refresh token not found' });
+      }
+
+      // Verify refresh token
+      const decoded = verifyToken(refreshToken);
+      
+      // Find user
+      const user = await User.findByPk(decoded.id);
+      if (!user || !user.isActive) {
+        return res.status(401).json({ message: 'Invalid token or inactive account' });
+      }
+
+      // Generate new access token
+      const accessToken = generateAccessToken({ id: user.id });
+
+      res.json({
+        token: accessToken
+      });
+    } catch (error) {
+      console.error('Refresh token error:', error);
+      res.status(401).json({ message: 'Invalid refresh token' });
     }
   }
 };

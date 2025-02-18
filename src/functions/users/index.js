@@ -28,6 +28,10 @@ const routeHandlers = {
   'POST /:userId/deactivate': {
     handler: userController.deactivateUser,
     middleware: [authenticate, authorize('user:update')]
+  },
+  'POST /refresh': {
+    handler: userController.refreshToken,
+    middleware: []
   }
 };
 

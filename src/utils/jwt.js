@@ -1,9 +1,26 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
 
-export const generateToken = (payload) => {
+// Access token expiration: 15 minutes
+const ACCESS_TOKEN_EXPIRATION = '15m';
+// Refresh token expiration: 7 days
+const REFRESH_TOKEN_EXPIRATION = '7d';
+
+export const generateTokens = (payload) => {
+  const accessToken = jwt.sign(payload, config.app.jwtSecret, {
+    expiresIn: ACCESS_TOKEN_EXPIRATION
+  });
+
+  const refreshToken = jwt.sign(payload, config.app.jwtSecret, {
+    expiresIn: REFRESH_TOKEN_EXPIRATION
+  });
+
+  return { accessToken, refreshToken };
+};
+
+export const generateAccessToken = (payload) => {
   return jwt.sign(payload, config.app.jwtSecret, {
-    expiresIn: config.app.jwtExpiration
+    expiresIn: ACCESS_TOKEN_EXPIRATION
   });
 };
 
